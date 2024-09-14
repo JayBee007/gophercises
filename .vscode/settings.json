@@ -1,0 +1,7 @@
+{
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontLigatures": true,
+    "editor.fontWeight": 600,
+    "editor.fontSize": 13,
+    "editor.defaultFormatter": "golang.go"
+}
