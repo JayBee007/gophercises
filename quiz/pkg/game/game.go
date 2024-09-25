@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 )
 
 type Quiz struct {
@@ -14,9 +15,18 @@ type Quiz struct {
 type Game struct {
 	questions    []Quiz
 	correctCount int
+	timeLimit    int
 }
 
-func (game *Game) Create(quizContents [][]string) {
+func NewGame(quizContents [][]string, timeLimit int) {
+	game := Game{}
+	game.create(quizContents, timeLimit)
+	game.start()
+}
+
+func (game *Game) create(quizContents [][]string, timeLimit int) {
+	game.timeLimit = timeLimit
+
 	for _, value := range quizContents {
 
 		if len(value) < 2 {
@@ -28,24 +38,38 @@ func (game *Game) Create(quizContents [][]string) {
 	}
 }
 
-func (game *Game) Start() {
+func (game *Game) start() {
+
+	timer := time.NewTimer(time.Duration(game.timeLimit) * time.Second)
+
 	input := bufio.NewScanner(os.Stdin)
-	for index, value := range game.questions {
-		fmt.Println("Question No. ", index+1, value.question)
-		input.Scan()
-		answer := input.Text()
-		if answer == value.answer {
-			game.correctCount += 1
+
+	go func() {
+		for index, value := range game.questions {
+			fmt.Println("Question No. ", index+1, value.question)
+			input.Scan()
+			answer := input.Text()
+			if answer == value.answer {
+				game.correctCount += 1
+			}
 		}
+	}()
+
+	if _, ok := <-timer.C; ok {
+		printTimesUp()
+		game.printScore()
+
+		return
 	}
+
+	game.printScore()
+
 }
 
-func (game *Game) PrintScore() {
+func printTimesUp() {
+	fmt.Println("Times up")
+}
+
+func (game *Game) printScore() {
 	fmt.Println(game.correctCount, "/", len(game.questions))
-}
-
-func (game *Game) PrintQuiz() {
-	for _, value := range game.questions {
-		fmt.Println(value)
-	}
 }
