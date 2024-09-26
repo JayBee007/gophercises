@@ -3,5 +3,6 @@
     "editor.fontLigatures": true,
     "editor.fontWeight": 600,
     "editor.fontSize": 13,
-    "editor.defaultFormatter": "golang.go"
+    "editor.defaultFormatter": "golang.go",
+    "explorer.compactFolders": false
 }
